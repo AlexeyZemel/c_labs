@@ -1,8 +1,8 @@
-#include "Class_temp.h"
+#include "Class.h"
 
 
 template <typename T>
-void DrawLine(int x1, int y1, int x2, int y2, BinaryImg<T>& src) 
+void DrawLine(int x1, int y1, int x2, int y2, BinaryImg<T>& src)
 {
     if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0) { throw EClassException("working with numbers greater than zero"); }
     if (x1 >= src.GetRow() || x2 >= src.GetRow() || y1 >= src.GetCol() || y2 >= src.GetCol()) {
@@ -17,6 +17,39 @@ void DrawLine(int x1, int y1, int x2, int y2, BinaryImg<T>& src)
     while (true)
     {
         src(x1, y1) = std::numeric_limits<T>::max();
+        if (x1 == x2 && y1 == y2) break;
+        int e2 = 2 * error;
+        if (e2 >= dy)
+        {
+            if (x1 == x2) break;
+            error = error + dy;
+            x1 = x1 + sx;
+        }
+        if (e2 <= dx)
+        {
+            if (y1 == y2) break;
+            error = error + dx;
+            y1 = y1 + sy;
+        }
+    }
+}
+
+template <>
+void DrawLine(int x1, int y1, int x2, int y2, BinaryImg<bool>& src)
+{
+    if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0) { throw EClassException("working with numbers greater than zero"); }
+    if (x1 >= src.GetRow() || x2 >= src.GetRow() || y1 >= src.GetCol() || y2 >= src.GetCol()) {
+        throw EClassException("Coordinates out of range");
+    }
+    int dx = abs(x2 - x1);
+    int sx = x1 < x2 ? 1 : -1;
+    int dy = -abs(y2 - y1);
+    int sy = y1 < y2 ? 1 : -1;
+    int error = dx + dy;
+
+    while (true)
+    {
+        src(x1, y1, std::numeric_limits<bool>::max());
         if (x1 == x2 && y1 == y2) break;
         int e2 = 2 * error;
         if (e2 >= dy)
@@ -68,6 +101,20 @@ void DrawLine(int x1, int y1, int x2, int y2, BinaryImg<char>& src)
     }
 }
 
+template <typename T>
+std::ostream& operator<<(std::ostream& os, BinaryImg<T>& obj)
+{
+    for (auto i : obj)  {
+        for (auto j : i) {
+            std::cout << j << std::setw(7);
+        }
+        std::cout << "\n";
+    }
+    return os;
+}
+
+
+
 
 void PrintMenu()
 {
@@ -80,7 +127,7 @@ void PrintMenu()
     std::cout << "choice: ";
 }
 
-void PrintMenu1() 
+void PrintMenu1()
 {
     system("cls");
     std::cout << "Make a choice:" << std::endl;
@@ -135,7 +182,7 @@ int main()
                             std::cin >> y;
                             std::cout << "Enter value: ";
                             std::cin >> temp;
-                            image(x, y) = temp;
+                            image(x, y, temp);
                             std::cout << image;
                             system("pause");
                         }
@@ -278,7 +325,7 @@ int main()
                         std::cout << res << std::endl;
                         system("pause");
                     }
-                    
+
                     else if (choice1 == 9) {
                         exit1 = true;
                     }
@@ -293,7 +340,7 @@ int main()
                 err.Print();
                 system("pause");
             }
-           
+
             break;
         case(2):
             std::cout << "Enter dimenstion of your image:" << std::endl;
@@ -864,4 +911,3 @@ int main()
 
     return 1;
 }
-
