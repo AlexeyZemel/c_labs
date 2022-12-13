@@ -1,6 +1,7 @@
 #include "Class.h"
 
 
+
 template <typename T>
 void DrawLine(int x1, int y1, int x2, int y2, BinaryImg<T>& src)
 {
